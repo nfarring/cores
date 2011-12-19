@@ -35,7 +35,7 @@ either expressed or implied, of The Regents of the University of California.
 
 /*
  * Synchronizes an asyncronous signal to a given clock by using a pipeline of
- * two register.
+ * two registers.
  */
 module sync_signal (
     input wire clk,
@@ -53,14 +53,8 @@ reg [WIDTH-1:0] sync1_reg = {WIDTH{1'b0}};
  */
 assign out = sync1_reg;
 
-/*
- * To minimize latency, the first register uses the negative clock edge and the
- * second register uses the positive clock edge. 
- */
-always @(negedge clk) begin
-    sync0_reg <= in;
-end
 always @(posedge clk) begin
+    sync0_reg <= in;
     sync1_reg <= sync0_reg;
 end
 
