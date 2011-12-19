@@ -33,7 +33,7 @@ either expressed or implied, of The Regents of the University of California.
 
 `timescale 1 ns / 1 ps
 
-module sync_signal_WIDTH1_DEPTH2_tb;
+module sync_signal_tb;
 
 // Inputs
 reg clk;
@@ -59,7 +59,7 @@ initial begin
    #32;
    in = 1'b0;
    #32;
-   @(posedge clk); // test 2: assert exactly at positive edge, violating setup/hold times
+   @(posedge clk); // test 2: assert exactly at positive edge
    in = 1'b1;
    #32;
    in = 1'b0;
@@ -68,7 +68,7 @@ initial begin
 end
 
 // Unit-under-test
-sync_signal_WIDTH1_DEPTH2
+sync_signal
 UUT (
     .clk(clk),
     .in(in),

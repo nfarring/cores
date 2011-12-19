@@ -34,7 +34,8 @@ either expressed or implied, of The Regents of the University of California.
 `timescale 1 ns / 1 ps
 
 /*
- * Synchronizes an asyncronous signal to a given clock.
+ * Synchronizes an asyncronous signal to a given clock by using a pipeline of
+ * two register.
  */
 module sync_signal (
     input wire clk,
@@ -43,35 +44,24 @@ module sync_signal (
 );
 
 parameter WIDTH=1; // width of the input and output signals
-parameter DEPTH=2; // number of synchronizing registers
 
-reg [WIDTH-1:0] sync_reg [DEPTH-1:0];
+reg [WIDTH-1:0] sync0_reg = {WIDTH{1'b0}};
+reg [WIDTH-1:0] sync1_reg = {WIDTH{1'b0}};
 
 /*
  * The synchronized output is the last register in the pipeline.
  */
-assign out = sync_reg[DEPTH-1];
+assign out = sync1_reg;
 
-generate
-    /*
-     * Initialize the registers to 0.
-     */
-    genvar i;
-    initial begin
-        for (i = 0; i < DEPTH; i = i + 1) begin : init_zero
-            sync_reg[i] = {WIDTH{1'b0}};
-        end
-    end
-    /*
-     * Build a pipeline of registers.
-     */
-    genvar j;
-    always @(posedge clk) begin
-        for (j = DEPTH-1; j > 0; j = j - 1) begin : pipeline
-            sync_reg[j] <= sync_reg[j-1];
-        end
-        sync_reg[0] <= in;
-    end
-endgenerate
+/*
+ * To minimize latency, the first register uses the negative clock edge and the
+ * second register uses the positive clock edge. 
+ */
+always @(negedge clk) begin
+    sync0_reg <= in;
+end
+always @(posedge clk) begin
+    sync1_reg <= sync0_reg;
+end
 
 endmodule

@@ -1,2 +1,0 @@
-verilog work ../sync_signal_WIDTH1_DEPTH2.v
-verilog work ../tb/sync_signal_WIDTH1_DEPTH2_tb.v

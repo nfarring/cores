@@ -1,1 +1,1 @@
-rmdir /S /Q sync_signal_WIDTH1_DEPTH2
+rmdir /S /Q sync_signal
