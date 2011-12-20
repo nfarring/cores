@@ -1,3 +1,4 @@
+async/isim/async_4phase_handshake_master
 async/isim/async_muller_c_element
 spi/isim/spi_master
 sync/isim/sync_signal
