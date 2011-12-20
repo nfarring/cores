@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="./isim.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="spi_master_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="18" />
+   <wave_markers>
+      <marker time="100000000" label="" />
+      <marker time="524000000" label="" />
+   </wave_markers>
+   <wvobject fp_name="divider29" type="divider">
+      <obj_property name="label">Clocks</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="BkColor">128 128 255</obj_property>
+      <obj_property name="TextColor">230 230 230</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/spi_clk_in" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk_in</obj_property>
+      <obj_property name="ObjectShortName">spi_clk_in</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/spi_clk_in_negedge" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk_in_negedge</obj_property>
+      <obj_property name="ObjectShortName">spi_clk_in_negedge</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/spi_clk_in_posedge" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk_in_posedge</obj_property>
+      <obj_property name="ObjectShortName">spi_clk_in_posedge</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider31" type="divider">
+      <obj_property name="label">Parallel Interface</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="BkColor">128 128 255</obj_property>
+      <obj_property name="TextColor">230 230 230</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/din" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">din[3:0]</obj_property>
+      <obj_property name="ObjectShortName">din[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/dout" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dout[3:0]</obj_property>
+      <obj_property name="ObjectShortName">dout[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/strobe" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">strobe</obj_property>
+      <obj_property name="ObjectShortName">strobe</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/busy" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">busy</obj_property>
+      <obj_property name="ObjectShortName">busy</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider30" type="divider">
+      <obj_property name="label">SPI Interface</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="BkColor">128 128 255</obj_property>
+      <obj_property name="TextColor">230 230 230</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/spi_clk_out" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk_out</obj_property>
+      <obj_property name="ObjectShortName">spi_clk_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/miso" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">miso</obj_property>
+      <obj_property name="ObjectShortName">miso</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/mosi" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">mosi</obj_property>
+      <obj_property name="ObjectShortName">mosi</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider32" type="divider">
+      <obj_property name="label">Internal</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="BkColor">128 128 255</obj_property>
+      <obj_property name="TextColor">230 230 230</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/bit_counter_reg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">bit_counter_reg[2:0]</obj_property>
+      <obj_property name="ObjectShortName">bit_counter_reg[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/data_reg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">data_reg[3:0]</obj_property>
+      <obj_property name="ObjectShortName">data_reg[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_master_tb/UUT/state_reg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">state_reg[2:0]</obj_property>
+      <obj_property name="ObjectShortName">state_reg[2:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+</wave_config>
