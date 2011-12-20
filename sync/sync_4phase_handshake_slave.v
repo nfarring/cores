@@ -33,57 +33,46 @@ either expressed or implied, of The Regents of the University of California.
 
 `timescale 1 ns / 1 ps
 
-module async_4phase_handshake_slave_tb;
-
-// Inputs
-reg clear = 1'b0;
-reg req = 1'b0;
-reg reset = 1'b1;
-
-// Outputs
-wire ack;
-wire flag;
-
-task assertion;
-input [255:0] variable_name;
-input actual;
-input expected;
-begin
-    if (actual != expected) begin
-        $display("ASSERTION FAILED: actual == 1'b%H, expected == 1'b%H: %s",
-            actual, expected, variable_name);
-        $stop;
-    end
-end
-endtask
-
-// Stimulus and assertions
-initial begin
-    #100; // wait for Xilinx GSR
-    reset = 1'b0;
-    // test 1: proper state transition
-    req = 1'b0; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b0);
-    req = 1'b1; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b1);
-    clear = 1'b1; #1; assertion("ack",ack,1'b1); assertion("flag",flag,1'b0);
-    clear = 1'b0; #1; assertion("ack",ack,1'b1); assertion("flag",flag,1'b0);
-    req = 1'b0; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b0);
-    // test 2: keep clear asserted longer than we should
-    req = 1'b0; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b0);
-    req = 1'b1; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b1);
-    clear = 1'b1; #1; assertion("ack",ack,1'b1); assertion("flag",flag,1'b0);
-    req = 1'b0; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b0);
-    clear = 1'b0; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b0);
-    $stop;
-end
-
-// Unit-under-test
-async_4phase_handshake_slave
-UUT (
-    .ack(ack),     // output
-    .clear(clear), // input
-    .flag(flag),   // output
-    .req(req),     // input
-    .reset(reset)  // input
+/*
+ * Allows messages to be passed synchronously from a master to a slave by
+ * using an alternating sequence of request (req) and acknowledgement (ack)
+ * levels.
+ *
+ * State 1: (~req,~ack) Master writes data to associated data bus
+ * State 2: ( req,~ack) Master asserts req
+ * State 3: ( req, ack) Slave reads data from associated data bus
+ * State 4: (~req, ack) Master deasserts req
+ *
+ * Ref: http://www.cl.cam.ac.uk/~djg11/wwwhpr/fourphase/fourphase.html
+ */
+module sync_4phase_handshake_slave (
+    output wire ack,
+    input wire clear,
+    input wire clk,
+    output wire flag,
+    input wire req
 );
+
+/*
+ * The outputs are encoded in the state register.
+ */
+localparam [1:0]
+    STATE_0 = 2'b00,
+    STATE_1 = 2'b01,
+    STATE_2 = 2'b10;
+reg [1:0] state_reg = STATE_0, state_next;
+always @* begin
+    state_next = state_reg;
+    case (state_reg)
+        STATE_0: if (req) state_next = STATE_1;
+        STATE_1: if (clear) state_next = STATE_2;
+        STATE_2: if (~req) state_next = STATE_0;
+        default: state_next = STATE_0; // should not happen
+    endcase
+end
+always @(posedge clk) state_reg <= state_next;
+
+assign ack = state_reg[1];
+assign flag = state_reg[0];
 
 endmodule

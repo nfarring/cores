@@ -33,57 +33,60 @@ either expressed or implied, of The Regents of the University of California.
 
 `timescale 1 ns / 1 ps
 
-module async_4phase_handshake_slave_tb;
+module sync_4phase_handshake_slave_tb;
 
 // Inputs
 reg clear = 1'b0;
+reg clk;
 reg req = 1'b0;
-reg reset = 1'b1;
 
 // Outputs
 wire ack;
 wire flag;
 
-task assertion;
-input [255:0] variable_name;
-input actual;
-input expected;
-begin
-    if (actual != expected) begin
-        $display("ASSERTION FAILED: actual == 1'b%H, expected == 1'b%H: %s",
-            actual, expected, variable_name);
-        $stop;
-    end
+always begin : clock_125MHz
+   clk = 1'b1;
+   #4;
+   clk = 1'b0;
+   #4;
 end
-endtask
 
-// Stimulus and assertions
-initial begin
+initial begin : stimulus
     #100; // wait for Xilinx GSR
-    reset = 1'b0;
-    // test 1: proper state transition
-    req = 1'b0; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b0);
-    req = 1'b1; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b1);
-    clear = 1'b1; #1; assertion("ack",ack,1'b1); assertion("flag",flag,1'b0);
-    clear = 1'b0; #1; assertion("ack",ack,1'b1); assertion("flag",flag,1'b0);
-    req = 1'b0; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b0);
-    // test 2: keep clear asserted longer than we should
-    req = 1'b0; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b0);
-    req = 1'b1; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b1);
-    clear = 1'b1; #1; assertion("ack",ack,1'b1); assertion("flag",flag,1'b0);
-    req = 1'b0; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b0);
-    clear = 1'b0; #1; assertion("ack",ack,1'b0); assertion("flag",flag,1'b0);
+    // test 1: proper usage
+    clear = 1'b0; req = 1'b0; @(negedge clk); ASSERT(ack,0,flag,0);
+                  req = 1'b1; @(negedge clk); ASSERT(ack,0,flag,1);
+    clear = 1'b1;             @(negedge clk); ASSERT(ack,1,flag,0);
+    clear = 1'b0;             @(negedge clk); ASSERT(ack,1,flag,0);
+                  req = 1'b0; @(negedge clk); ASSERT(ack,0,flag,0);
     $stop;
 end
 
 // Unit-under-test
-async_4phase_handshake_slave
+sync_4phase_handshake_slave
 UUT (
-    .ack(ack),     // output
-    .clear(clear), // input
-    .flag(flag),   // output
-    .req(req),     // input
-    .reset(reset)  // input
+    .ack(ack),
+    .clear(clear),
+    .clk(clk),
+    .flag(flag),
+    .req(req)
 );
+
+//////////////////////////////////////////////////////////////////////////////
+// ASSERTIONS
+//////////////////////////////////////////////////////////////////////////////
+
+`include "../../testbench_common.vh"
+
+task ASSERT;
+input ack_actual;
+input ack_expected;
+input flag_actual;
+input flag_expected;
+begin
+    Assertion("ack",ack_actual,ack_expected);
+    Assertion("flag",flag_actual,flag_expected);
+end
+endtask
 
 endmodule

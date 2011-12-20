@@ -1,0 +1,2 @@
+verilog work ../sync_4phase_handshake_slave.v
+verilog work ../tb/sync_4phase_handshake_slave_tb.v
