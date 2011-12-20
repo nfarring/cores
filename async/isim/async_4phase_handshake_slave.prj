@@ -1,0 +1,3 @@
+verilog work ../async_4phase_handshake_slave.v
+verilog work ../async_muller_c_element.v
+verilog work ../tb/async_4phase_handshake_slave_tb.v

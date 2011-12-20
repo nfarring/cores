@@ -9,7 +9,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="4" />
+   <WVObjectSize size="5" />
    <wvobject fp_name="/async_4phase_handshake_master_tb/ack" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">ack</obj_property>
       <obj_property name="ObjectShortName">ack</obj_property>
@@ -21,6 +21,10 @@
    <wvobject fp_name="/async_4phase_handshake_master_tb/req" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">req</obj_property>
       <obj_property name="ObjectShortName">req</obj_property>
+   </wvobject>
+   <wvobject fp_name="/async_4phase_handshake_master_tb/reset" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
    </wvobject>
    <wvobject fp_name="/async_4phase_handshake_master_tb/strobe" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">strobe</obj_property>
