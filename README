@@ -1,9 +1,10 @@
 Cores is a library of somewhat reusable hardware modules that I have
-accumulated for different FPGA projects. Here is the module structure:
+accumulated for different FPGA projects. Each module has one or more related
+cores. Here is the module structure:
 
 <module>/
     doc/        Documentation
-    isim/       Scripts for running Xilinx ISIM
-    tb/         Testbench sources files for verification
+    isim/       Scripts for running the Xilinx ISIM simulator
+    tb/         Testbench source files for verification
     *.v         Verilog source files for synthesis
     *.vhd       VHDL source files for synthesis
