@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="./isim.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="async_muller_c_element_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="2" />
+   <wvobject fp_name="/async_muller_c_element_tb/in" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">in[1:0]</obj_property>
+      <obj_property name="ObjectShortName">in[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/async_muller_c_element_tb/out" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">out</obj_property>
+      <obj_property name="ObjectShortName">out</obj_property>
+   </wvobject>
+</wave_config>
