@@ -35,7 +35,8 @@ either expressed or implied, of The Regents of the University of California.
 
 module timer_tb;
 
-localparam NTICKS=10;
+localparam TIMER_PERIOD_NS=80;
+localparam CLOCK_PERIOD_NS=8;
 
 reg arm = 1'b0;
 reg clk;
@@ -90,7 +91,9 @@ initial begin : stimulus
     $stop;
 end
 
-timer #(.NTICKS(NTICKS))
+timer #(
+    .TIMER_PERIOD_NS(TIMER_PERIOD_NS),
+    .CLOCK_PERIOD_NS(CLOCK_PERIOD_NS))
 UUT (
     .arm(arm),  // input
     .clk(clk),  // input

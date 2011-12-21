@@ -45,8 +45,10 @@ module timer (
 
 `include "../common.vh"
 
-parameter NTICKS=10; // number of counter ticks until the timer fires
-localparam NBITS=log2(NTICKS); // for Xilinx XST compatibility
+parameter TIMER_PERIOD_NS=80; // how long until the timer fires
+parameter CLOCK_PERIOD_NS=8;  // period of the common clock
+parameter NTICKS=TIMER_PERIOD_NS/CLOCK_PERIOD_NS; // overridable if necessary
+localparam NBITS=log2(NTICKS); // size of state register
 
 reg [NBITS-1:0] state_reg = 0, state_next;
 always @* begin
