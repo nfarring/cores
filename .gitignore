@@ -5,3 +5,4 @@ spi/isim/spi_master
 sync/isim/sync_4phase_handshake_master
 sync/isim/sync_4phase_handshake_slave
 sync/isim/sync_signal
+timer/isim/timer
