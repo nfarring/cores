@@ -2,7 +2,4 @@
 async/isim/async_4phase_handshake_master
 async/isim/async_4phase_handshake_slave
 async/isim/async_muller_c_element
-sync/isim/sync_4phase_handshake_master
-sync/isim/sync_4phase_handshake_slave
-sync/isim/sync_signal
 timer/isim/timer
