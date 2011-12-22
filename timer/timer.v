@@ -43,7 +43,7 @@ module timer (
     output wire fire
 );
 
-`include "../common.vh"
+`include "common.vh"
 
 parameter TIMER_PERIOD_NS=80; // how long until the timer fires
 parameter CLOCK_PERIOD_NS=8;  // period of the common clock

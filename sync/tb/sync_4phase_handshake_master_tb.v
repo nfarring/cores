@@ -86,7 +86,7 @@ UUT (
 // ASSERTIONS
 //////////////////////////////////////////////////////////////////////////////
 
-`include "../../testbench_common.vh"
+`include "testbench_common.vh"
 
 task ASSERT;
 input busy_actual;

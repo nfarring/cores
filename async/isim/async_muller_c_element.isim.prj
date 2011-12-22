@@ -1,2 +1,2 @@
-verilog work ../async_muller_c_element.v
-verilog work ../tb/async_muller_c_element_tb.v
+verilog work ../async_muller_c_element.v -i ../../../include
+verilog work ../tb/async_muller_c_element_tb.v -i ../../../include

@@ -58,14 +58,7 @@ module spi_master (
 // PARAMETERS AND CONSTANTS
 ////////////////////////////////////////////////////////////////////////////
 
-function integer log2;
-    input integer value;
-    begin
-        value = value-1;
-        for (log2=0; value>0; log2=log2+1)
-            value = value>>1;
-    end
-endfunction
+`include "common.vh"
 
 parameter WIDTH=32; // length of a SPI word
 localparam BIT_COUNTER_WIDTH=log2(WIDTH)+1; // for Xilinx XST compatibility

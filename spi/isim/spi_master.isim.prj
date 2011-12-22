@@ -1,2 +1,2 @@
-verilog work ../spi_master.v
+verilog work ../spi_master.v -i ../../../include
 verilog work ../tb/spi_master_tb.v

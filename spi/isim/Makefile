@@ -1,4 +1,4 @@
-include ../../include.mk
+include ../../include/include.mk
 
 TARGETS=spi_master.isim
 

@@ -76,7 +76,7 @@ UUT (
 // ASSERTIONS
 //////////////////////////////////////////////////////////////////////////////
 
-`include "../../testbench_common.vh"
+`include "testbench_common.vh"
 
 task ASSERT;
 input ack_actual;

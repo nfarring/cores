@@ -1,6 +1,19 @@
 Cores is a library of somewhat reusable hardware modules that I have
-accumulated for different FPGA projects. Each module has one or more related
-cores. Here is the module structure:
+accumulated for different FPGA projects.
+
+
+Installation
+============
+
+Set the NFARRING_CORES environment variable to point to this top-level
+directory. Then you can refer to individual cores and their include files in
+your toolchain.
+
+
+Module Structure
+================
+
+Each module has one or more related cores. Here is the module structure:
 
 <module>/
     doc/        Documentation
