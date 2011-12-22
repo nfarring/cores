@@ -1,2 +1,0 @@
-verilog work ../spi_master.v
-verilog work ../tb/spi_master_tb.v
