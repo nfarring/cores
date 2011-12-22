@@ -1,0 +1,2 @@
+verilog work ../async_4phase_handshake_master.v
+verilog work ../tb/async_4phase_handshake_master_tb.v

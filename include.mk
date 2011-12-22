@@ -5,7 +5,5 @@
 # isim/ subdirectory.
 %.isim: ../%.v ../tb/%_tb.v
 	mkdir $@
-	echo verilog work ../../$(basename $@).v >$@\isim.prj
-	echo verilog work ../../tb/$(basename $@)_tb.v >>$@\isim.prj
 	echo run all >$@\run.tcl
-	cd $@ && fuse $(basename $@)_tb -prj isim.prj && x.exe -gui -view ..\$@.wcfg -tclbatch run.tcl
+	cd $@ && fuse $(basename $@)_tb -prj ..\$@.prj && x.exe -gui -view ..\$@.wcfg -tclbatch run.tcl
