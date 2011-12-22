@@ -1,6 +1,6 @@
-include ../include.mk
+include ../../include.mk
 
-TARGETS=spi_master.isim
+TARGETS=timer.isim
 
 all: $(TARGETS)
 
