@@ -29,40 +29,64 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of The Regents of the University of California.
 */
 
-// Language: Verilog 2001
+// Language: Verilog-2001
 
 `timescale 1 ns / 1 ps
 
-/*
- * A simple timer that expires after a specified number of clock ticks.
- */
-module timer (
-    input wire arm,
-    input wire clk,
-    input wire en,
-    output wire fire
+module sync_4phase_handshake_slave_tb;
+
+// Inputs
+reg clear = 1'b0;
+reg clk;
+reg req = 1'b0;
+
+// Outputs
+wire ack;
+wire flag;
+
+always begin : clock_125MHz
+   clk = 1'b1;
+   #4;
+   clk = 1'b0;
+   #4;
+end
+
+initial begin : stimulus
+    #100; // wait for Xilinx GSR
+    // test 1: proper usage
+    clear = 1'b0; req = 1'b0; @(negedge clk); ASSERT(ack,0,flag,0);
+                  req = 1'b1; @(negedge clk); ASSERT(ack,0,flag,1);
+    clear = 1'b1;             @(negedge clk); ASSERT(ack,1,flag,0);
+    clear = 1'b0;             @(negedge clk); ASSERT(ack,1,flag,0);
+                  req = 1'b0; @(negedge clk); ASSERT(ack,0,flag,0);
+    $stop;
+end
+
+// Unit-under-test
+sync_4phase_handshake_slave
+UUT (
+    .ack(ack),
+    .clear(clear),
+    .clk(clk),
+    .flag(flag),
+    .req(req)
 );
 
-`include "common.vh"
+//////////////////////////////////////////////////////////////////////////////
+// ASSERTIONS
+//////////////////////////////////////////////////////////////////////////////
 
-parameter TIMER_PERIOD_NS=80; // how long until the timer fires
-parameter CLOCK_PERIOD_NS=8;  // period of the common clock
-parameter NTICKS=TIMER_PERIOD_NS/CLOCK_PERIOD_NS; // overridable if necessary
-localparam NBITS=log2(NTICKS); // size of state register
+`include "assertion.vh"
 
-reg [NBITS-1:0] state_reg = 0, state_next;
-always @* begin
-    state_next = state_reg;
-    if (arm)
-        state_next = NTICKS - 1;
-    else if (en & state_reg != 0)
-        state_next = state_reg - 1;
+task ASSERT;
+input ack_actual;
+input ack_expected;
+input flag_actual;
+input flag_expected;
+begin
+    Assertion("ack",ack_actual,ack_expected);
+    Assertion("flag",flag_actual,flag_expected);
 end
-always @(posedge clk) state_reg <= state_next;
-
-reg fire_reg = 1'b0;
-wire fire_next = ~arm & en & ~(|state_reg);
-always @(posedge clk) fire_reg <= fire_next;
-assign fire = fire_reg;
+endtask
 
 endmodule

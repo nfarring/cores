@@ -1,2 +1,0 @@
-verilog work ../timer.v -i ../../../include
-verilog work ../tb/timer_tb.v -i ../../../include

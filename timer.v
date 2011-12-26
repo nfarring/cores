@@ -29,25 +29,40 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of The Regents of the University of California.
 */
 
-// Language: Verilog-2001
+// Language: Verilog 2001
+
+`timescale 1 ns / 1 ps
 
 /*
- * Include this file in Verilog 2001 source files.
+ * A simple timer that expires after a specified number of clock ticks.
  */
+module timer (
+    input wire arm,
+    input wire clk,
+    input wire en,
+    output wire fire
+);
 
-`ifndef __common_vh__
-`define __common_vh__
+`include "log2.vh"
 
-/*
- * Verilog 2001 does not have a built-in log2 function.
- */
-function integer log2;
-    input integer value;
-    begin
-        value = value-1;
-        for (log2=0; value>0; log2=log2+1)
-            value = value>>1;
-    end
-endfunction
+parameter TIMER_PERIOD_NS=80; // how long until the timer fires
+parameter CLOCK_PERIOD_NS=8;  // period of the common clock
+parameter NTICKS=TIMER_PERIOD_NS/CLOCK_PERIOD_NS; // overridable if necessary
+localparam NBITS=log2(NTICKS); // size of state register
 
-`endif // __common_vh__
+reg [NBITS-1:0] state_reg = 0, state_next;
+always @* begin
+    state_next = state_reg;
+    if (arm)
+        state_next = NTICKS - 1;
+    else if (en & state_reg != 0)
+        state_next = state_reg - 1;
+end
+always @(posedge clk) state_reg <= state_next;
+
+reg fire_reg = 1'b0;
+wire fire_next = ~arm & en & ~(|state_reg);
+always @(posedge clk) fire_reg <= fire_next;
+assign fire = fire_reg;
+
+endmodule

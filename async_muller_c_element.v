@@ -49,7 +49,7 @@ parameter WIDTH=2; // number of input signals
 wire [WIDTH-1:0] stage0;
 generate
       genvar i;
-      for (i = 0; i < WIDTH; i = i + 1) begin
+      for (i = 0; i < WIDTH; i = i + 1) begin : generate_stage0
           assign stage0[i] = in[i] & out;
       end
 endgenerate

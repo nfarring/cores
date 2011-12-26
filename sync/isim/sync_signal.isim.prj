@@ -1,2 +1,0 @@
-verilog work ../sync_signal.v -i ../../../include
-verilog work ../tb/sync_signal_tb.v -i ../../../include

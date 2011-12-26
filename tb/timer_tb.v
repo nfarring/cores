@@ -105,7 +105,7 @@ UUT (
 // ASSERTIONS
 //////////////////////////////////////////////////////////////////////////////
 
-`include "testbench_common.vh"
+`include "assertion.vh"
 
 task ASSERT;
 input fire_actual;

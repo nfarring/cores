@@ -10,14 +10,11 @@ directory. Then you can refer to individual cores and their include files in
 your toolchain.
 
 
-Module Structure
-================
+Directory Structure
+===================
 
-Each module has one or more related cores. Here is the module structure:
-
-<module>/
-    doc/        Documentation
-    isim/       Scripts for running the Xilinx ISIM simulator
-    tb/         Testbench source files for verification
-    *.v         Verilog source files for synthesis
-    *.vhd       VHDL source files for synthesis
+doc/        Documentation
+isim/       Scripts for running the Xilinx ISIM simulator
+tb/         Testbench source files for verification
+*.v         Verilog source files for synthesis
+*.vhd       VHDL source files for synthesis

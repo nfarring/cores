@@ -32,22 +32,20 @@ either expressed or implied, of The Regents of the University of California.
 // Language: Verilog-2001
 
 /*
- * Include this file in Verilog 2001 testbenches.
+ * This Verilog include file provides a log2 function, which is very useful for
+ * calcuating register sizes from parameters.
  */
 
-`ifndef __testbench_common_vh__
-`define __testbench_common_vh__
+`ifndef __log2_vh__
+`define __log2_vh__
 
-task Assertion;
-input [255:0] variable_name;
-input actual;
-input expected;
-begin
-    if (actual != expected) begin
-        $display("ASSERTION FAILED: actual == 1'b%H, expected == 1'b%H: %s", actual, expected, variable_name);
-        $stop;
+function integer log2;
+    input integer value;
+    begin
+        value = value-1;
+        for (log2=0; value>0; log2=log2+1)
+            value = value>>1;
     end
-end
-endtask
+endfunction
 
-`endif // __testbench_common_vh__
+`endif // __log2_vh__

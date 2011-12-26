@@ -33,16 +33,16 @@ either expressed or implied, of The Regents of the University of California.
 
 `timescale 1 ns / 1 ps
 
-module sync_4phase_handshake_slave_tb;
+module sync_4phase_handshake_master_tb;
 
 // Inputs
-reg clear = 1'b0;
+reg ack = 1'b0;
 reg clk;
-reg req = 1'b0;
+reg strobe = 1'b0;
 
 // Outputs
-wire ack;
-wire flag;
+wire req;
+wire busy;
 
 always begin : clock_125MHz
    clk = 1'b1;
@@ -54,38 +54,48 @@ end
 initial begin : stimulus
     #100; // wait for Xilinx GSR
     // test 1: proper usage
-    clear = 1'b0; req = 1'b0; @(negedge clk); ASSERT(ack,0,flag,0);
-                  req = 1'b1; @(negedge clk); ASSERT(ack,0,flag,1);
-    clear = 1'b1;             @(negedge clk); ASSERT(ack,1,flag,0);
-    clear = 1'b0;             @(negedge clk); ASSERT(ack,1,flag,0);
-                  req = 1'b0; @(negedge clk); ASSERT(ack,0,flag,0);
+                               @(negedge clk); ASSERT(busy,0,req,0);
+                strobe = 1'b1; @(negedge clk); ASSERT(busy,1,req,1);
+    ack = 1'b1; strobe = 1'b0; @(negedge clk); ASSERT(busy,1,req,1);
+                               @(negedge clk); ASSERT(busy,1,req,0);
+    ack = 1'b0;                @(negedge clk); ASSERT(busy,0,req,0);
+    // test 2: strobe stays high too long and a second transaction is initiated
+                               @(negedge clk); ASSERT(busy,0,req,0);
+                strobe = 1'b1; @(negedge clk); ASSERT(busy,1,req,1);
+    ack = 1'b1;                @(negedge clk); ASSERT(busy,1,req,1);
+                               @(negedge clk); ASSERT(busy,1,req,0);
+    ack = 1'b0;                @(negedge clk); ASSERT(busy,0,req,0);
+                               @(negedge clk); ASSERT(busy,1,req,1);
+    ack = 1'b1; strobe = 1'b0; @(negedge clk); ASSERT(busy,1,req,1);
+                               @(negedge clk); ASSERT(busy,1,req,0);
+    ack = 1'b0;                @(negedge clk); ASSERT(busy,0,req,0);
     $stop;
 end
 
 // Unit-under-test
-sync_4phase_handshake_slave
+sync_4phase_handshake_master
 UUT (
     .ack(ack),
-    .clear(clear),
+    .busy(busy),
     .clk(clk),
-    .flag(flag),
-    .req(req)
+    .req(req),
+    .strobe(strobe)
 );
 
 //////////////////////////////////////////////////////////////////////////////
 // ASSERTIONS
 //////////////////////////////////////////////////////////////////////////////
 
-`include "testbench_common.vh"
+`include "assertion.vh"
 
 task ASSERT;
-input ack_actual;
-input ack_expected;
-input flag_actual;
-input flag_expected;
+input busy_actual;
+input busy_expected;
+input req_actual;
+input req_expected;
 begin
-    Assertion("ack",ack_actual,ack_expected);
-    Assertion("flag",flag_actual,flag_expected);
+    Assertion("busy",busy_actual,busy_expected);
+    Assertion("req",req_actual,req_expected);
 end
 endtask
 
