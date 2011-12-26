@@ -47,18 +47,18 @@ def find_dependencies(module):
     def add_if_exists(file):
         if os.path.exists(file):
             dependencies.append(file)
+    add_if_exists(module + '.xco')
     add_if_exists(module + '.v')
     add_if_exists(module + '.vhd')
     add_if_exists('tb/' + module + '_tb.v')
     add_if_exists('tb/' + module + '_tb.vhd')
     add_if_exists('tb/isim/' + module + '.wcfg')
-    add_if_exists(module + '.xco')
     return dependencies
 
 def find_modules():
     "Returns a list of modules by looking at the files in the current directory."
     files = []
-    for ext in ('.v','.vhd','.xco'):
+    for ext in ('.xco','.v','.vhd'):
         files += glob.glob('*' + ext)
     def stripext(file): return file.partition('.')[0]
     modules = [stripext(file) for file in files]
