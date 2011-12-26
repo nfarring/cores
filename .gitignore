@@ -1,8 +1,1 @@
-async_4phase_handshake_master
-async_4phase_handshake_slave
-async_muller_c_element
-spi_master
-sync_4phase_handshake_master
-sync_4phase_handshake_slave
-sync_signal
-timer
+build
