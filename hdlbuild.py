@@ -35,7 +35,8 @@ def build(module):
             xilinx_vhpcomp(relpath)
         elif file.endswith('.xco'):
             xilinx_coregen(relpath)
-        else: shutil.copy(relpath,'.')
+        else:
+            shutil.copy(relpath,'.')
     # Do we need to build Xilinx ISIM?
     if os.path.exists('isim'):
         xilinx_fuse(module)
@@ -64,14 +65,16 @@ def find_modules():
     modules = [stripext(file) for file in files]
     return modules
 
-def xilinx_coregen(module, file):
-    "Xilinx"
-    pass
+def xilinx_coregen(file):
+    "Xilinx CORE Generator."
+    subprocess.call(['coregen','-b',file])
 
 def xilinx_fuse(module):
     "Generates Xilinx ISIM executable."
+    glbl= os.path.join(os.environ['XILINX'],'verilog','src','glbl.v')
+    xilinx_vlogcomp(glbl)
     testbench = module + '_tb'
-    subprocess.call(['fuse',testbench])
+    subprocess.call(['fuse',testbench,'-L','unisims_ver','-L','unimacros_ver','-L','xilinxcorelib_ver'])
 
 def xilinx_isim_scripts(module):
     "Generates helper scripts for Xilinx ISIM."
