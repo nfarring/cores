@@ -14,70 +14,67 @@ VERBOSE=False
 
 class HDLBuildException(Exception): pass
 
-def build(module):
-    "Builds all of the outputs that we know how to build."
-    # Search for dependencies.
-    dependencies = find_dependencies(module)
-    # Get extra dependencies from the configuration file.
-    if config.has_option(module,'dependencies'):
-        value = config.get(module,'dependencies')
-        if value != '': dependencies += value.split(',')
-    # Make a directory for the module and change into it.
-    os.chdir('build')
-    os.mkdir(module)
-    os.chdir(module)
-    # Process each file.
-    for file in dependencies:
-        relpath = '../../' + file
-        if file.endswith('.v'):
-            xilinx_vlogcomp(relpath)
-        elif file.endswith('.vhd'):
-            xilinx_vhpcomp(relpath)
-        elif file.endswith('.xco'):
-            xilinx_coregen(relpath)
-        else:
-            shutil.copy(relpath,'.')
-    # Do we need to build Xilinx ISIM?
-    if os.path.exists('isim'):
-        xilinx_fuse(module)
-        xilinx_isim_scripts(module)
+def abspath(path):
+    "Recursive wrapper for os.path.abspath()."
+    if type(path) == list:
+        return [abspath(p) for p in path]
+    return os.path.abspath(os.path.expandvars(path.strip()))
 
-def find_dependencies(module):
-    "Returns a list of dependencies for a given module."
-    dependencies = []
-    def add_if_exists(file):
-        if os.path.exists(file):
-            dependencies.append(file)
-    add_if_exists(module + '.xco')
-    add_if_exists(module + '.v')
-    add_if_exists(module + '.vhd')
-    add_if_exists('tb/' + module + '_tb.v')
-    add_if_exists('tb/' + module + '_tb.vhd')
-    add_if_exists('tb/isim/' + module + '.wcfg')
-    return dependencies
+def build(target):
+    "Builds a target."
+    if target.endswith('.isim'):
+        build_isim(target)
 
-def find_modules():
-    "Returns a list of modules by looking at the files in the current directory."
-    files = []
-    for ext in ('.xco','.v','.vhd'):
-        files += glob.glob('*' + ext)
-    def stripext(file): return file.partition('.')[0]
-    modules = [stripext(file) for file in files]
-    return modules
-
-def xilinx_coregen(file):
-    "Xilinx CORE Generator."
-    subprocess.call(['coregen','-b',file])
-
-def xilinx_fuse(module):
-    "Generates Xilinx ISIM executable."
-    glbl= os.path.join(os.environ['XILINX'],'verilog','src','glbl.v')
-    xilinx_vlogcomp(glbl)
+def build_isim(target):
+    "Builds an Xilinx ISIM simulator."
+    # Remove the .isim suffix to form the module name.
+    module = target[:-5]
+    # Determine our list of library directories to search for source files. This includes the top-level directory, the
+    # *.coregen subdirectories (so generate those first), and all directories listed in the libdirs file.
+    with open('libdirs','r') as f:
+        libdirs = [abspath(path) for path in f.readlines()]
+    coregendirs = [abspath(path) for path in glob.glob('*.coregen')]
+    dirs = [abspath('.')] + coregendirs + libdirs
+    # Enumerate all Verilog and VHDL source.
+    # Enumerate all CoreGen MIF files for initializing RAMs and ROMs.
+    verilog_source = []
+    vhdl_source = []
+    mif_files = []
+    for dir in dirs: verilog_source += abspath(glob.glob(dir + '/*.v'))
+    for dir in dirs: vhdl_source += abspath(glob.glob(dir + '/*.vhd'))
+    for dir in dirs: mif_files += abspath(glob.glob(dir + '/*.mif'))
+    # Find and add the testbench source to the correct list.
+    testbench_source_verilog = abspath('tb/' + module + '_tb.v')
+    testbench_source_vhdl = abspath('tb/' + module + '_tb.vhd')
+    if os.path.exists(testbench_source_verilog):
+        verilog_source.append(testbench_source_verilog)
+    elif os.path.exists(testbench_source_vhdl):
+        vhdl_source.append(testbench_source_vhdl)
+    else:
+        sys.stderr.write('error: could not find testbench source file\n')
+        quit(-1)
+    # Create the target directory.
+    cwd = os.getcwd()
+    shutil.rmtree(target)
+    os.mkdir(target)
+    os.chdir(target)
+    # Compile the source.
+    for file in verilog_source:
+        subprocess.call(['vlogcomp',file])
+    for file in vhdl_source:
+        subprocess.call(['vhpcomp',file])
+    for file in mif_files:
+        shutil.copy(file,'.')
+    # Copy the ISIM Waveform Configuration file if it exists.
+    wcfgfile = abspath('tb/isim/' + module + '.wcfg')
+    if os.path.exists(wcfgfile):
+        shutil.copy(wcfgfile,'.')
+    # Compile the ISIM executable.
+    glbl = abspath('$XILINX/verilog/src/glbl.v')
+    subprocess.call(['vlogcomp',glbl])
     testbench = module + '_tb'
     subprocess.call(['fuse',testbench,'-L','unisims_ver','-L','unimacros_ver','-L','xilinxcorelib_ver'])
-
-def xilinx_isim_scripts(module):
-    "Generates helper scripts for Xilinx ISIM."
+    # Generate helper scripts.
     with open('run.tcl', 'w') as f: f.write('run all')
     with open('interactive_test.bat', 'w') as f: f.write('x.exe -gui -view %s.wcfg -tclbatch run.tcl' % module)
     with open('interactive_test.sh', 'w') as f: f.write('#!/bin/sh\nx -gui -view %s.wcfg -tclbatch run.tcl' % module)
@@ -85,37 +82,14 @@ def xilinx_isim_scripts(module):
     with open('regression_test.bat', 'w') as f: f.write('x.exe -tclbatch run.tcl')
     with open('regression_test.sh', 'w') as f: f.write('#!/bin/sh\nx -tclbatch run.tcl')
     os.chmod('regression_test.sh', stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+    # We are done.
+    os.chdir(cwd)
 
-def xilinx_vlogcomp(file):
-    "Xilinx Verilog compiler for ISIM."
-    subprocess.call(['vlogcomp',file])
-
-def xilinx_vhpcomp(file):
-    "Xilinx VHDL compiler for ISIM."
-    subprocess.call(['vhpcomp',file])
-
+# usage: python hdlbuild.py target1 [target2 [...]]
 if __name__=='__main__':
-    global config
-    # Try to read an hdlbuild.ini configuration file.
-    config = ConfigParser.ConfigParser()
-    configFiles = config.read(['hdlbuild.ini'])
-    if len(configFiles) == 0:
-        print('WARNING: could not find hdlbuild.ini; using defaults')
-    elif VERBOSE:
-        print('parsing config file hdlbuild.ini')
-    # See if modules were given explicitly as arguments.
-    # If not then find modules by examining the HDL files.
-    modules = sys.argv[1:]
-    if len(modules) == 0:
-        modules = find_modules()
-    # Create the build directory if it does not exist.
-    if not os.path.exists('build'):
-        os.mkdir('build')
-    # Build each module.
-    # Skip modules that already exist.
-    # TODO: Add a --force flag to force the rebuilding of an existing module.
-    cwd = os.getcwd()
-    for module in modules:
-        if not os.path.exists('build/' + module):
-            os.chdir(cwd)
-            build(module)
+    args = sys.argv[1:]
+    if len(args) == 0:
+        sys.stderr.write('ERROR: no target specified\n')
+        quit()
+    for target in args:
+        build(target)
