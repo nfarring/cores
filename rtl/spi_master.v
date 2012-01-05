@@ -41,17 +41,23 @@ either expressed or implied, of The Regents of the University of California.
  * Ref: https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus
  */
 module spi_master (
-    output wire busy,
     input wire clk,
+    /*
+     * Inputs
+     */
     input wire [WIDTH-1:0] din,
-    output wire [WIDTH-1:0] dout,
     input wire miso,
-    output wire mosi,
     input wire spi_clk_in,
     input wire spi_clk_in_negedge,
     input wire spi_clk_in_posedge,
-    output wire spi_clk_out,
-    input wire strobe
+    input wire strobe,
+    /*
+     * Outputs
+     */
+    output wire busy,
+    output wire [WIDTH-1:0] dout,
+    output wire mosi,
+    output wire spi_clk_out
 );
 
 ////////////////////////////////////////////////////////////////////////////
