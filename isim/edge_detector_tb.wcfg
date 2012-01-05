@@ -10,7 +10,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="5" />
+   <WVObjectSize size="7" />
    <wvobject fp_name="/edge_detector_tb/test" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">test[31:0]</obj_property>
       <obj_property name="ObjectShortName">test[31:0]</obj_property>
@@ -24,12 +24,20 @@
       <obj_property name="ElementShortName">in</obj_property>
       <obj_property name="ObjectShortName">in</obj_property>
    </wvobject>
-   <wvobject fp_name="/edge_detector_tb/negedge_out" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">negedge_out</obj_property>
-      <obj_property name="ObjectShortName">negedge_out</obj_property>
+   <wvobject fp_name="/edge_detector_tb/posedge_comb_out" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">posedge_comb_out</obj_property>
+      <obj_property name="ObjectShortName">posedge_comb_out</obj_property>
    </wvobject>
    <wvobject fp_name="/edge_detector_tb/posedge_out" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">posedge_out</obj_property>
       <obj_property name="ObjectShortName">posedge_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/edge_detector_tb/negedge_comb_out" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">negedge_comb_out</obj_property>
+      <obj_property name="ObjectShortName">negedge_comb_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/edge_detector_tb/negedge_out" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">negedge_out</obj_property>
+      <obj_property name="ObjectShortName">negedge_out</obj_property>
    </wvobject>
 </wave_config>

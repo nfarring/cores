@@ -40,7 +40,9 @@ module edge_detector (
     input clk,
     input in,
     output negedge_out,
-    output posedge_out
+    output negedge_comb_out,
+    output posedge_out,
+    output posedge_comb_out
 );
 
 ////////////////////////////////////////////////////////////////////////////
@@ -72,7 +74,9 @@ wire posedge_next = ({in_reg,in} == 2'b01);
 ////////////////////////////////////////////////////////////////////////////
 
 assign negedge_out = negedge_reg;
+assign negedge_comb_out = negedge_next;
 assign posedge_out = posedge_reg;
+assign posedge_comb_out = posedge_next;
 
 ////////////////////////////////////////////////////////////////////////////
 // COMBINATIONAL ALWAYS STATEMENTS (always @* begin ... end)

@@ -57,7 +57,9 @@ reg in = 1'b0;
  * UUT Outputs
  */
 wire negedge_out;
+wire negedge_comb_out;
 wire posedge_out;
+wire posedge_comb_out;
 
 ////////////////////////////////////////////////////////////////////////////
 // CLOCKS
@@ -97,10 +99,12 @@ end
 
 edge_detector
 UUT (
-    .clk(clk),                 // input
-    .in(in),                   // input
-    .negedge_out(negedge_out), // output
-    .posedge_out(posedge_out)  // output
+    .clk(clk),                           // input
+    .in(in),                             // input
+    .negedge_out(negedge_out),           // output
+    .negedge_comb_out(negedge_comb_out), // output
+    .posedge_out(posedge_out),           // output
+    .posedge_comb_out(posedge_comb_out)  // output
 );
 
 endmodule
