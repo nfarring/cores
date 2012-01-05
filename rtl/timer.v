@@ -54,9 +54,9 @@ reg [NBITS-1:0] state_reg = 0, state_next;
 always @* begin
     state_next = state_reg;
     if (arm)
-        state_next = NTICKS - 1;
+        state_next = NTICKS - 1'b1;
     else if (en & state_reg != 0)
-        state_next = state_reg - 1;
+        state_next = state_reg - 1'b1;
 end
 always @(posedge clk) state_reg <= state_next;
 
