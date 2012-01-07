@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="Z:/nfarring/src/2011/cores/ise/sync_reset_tb_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="sync_reset_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="4" />
+   <wvobject fp_name="/sync_reset_tb/test" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">test[31:0]</obj_property>
+      <obj_property name="ObjectShortName">test[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sync_reset_tb/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sync_reset_tb/rst" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/sync_reset_tb/sync_reset_out" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">sync_reset_out</obj_property>
+      <obj_property name="ObjectShortName">sync_reset_out</obj_property>
+   </wvobject>
+</wave_config>
