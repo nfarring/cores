@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="Z:/nfarring/src/2011/cores/ise/spi_slave_tb_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="spi_slave_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="14" />
+   <wvobject fp_name="/spi_slave_tb/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/spi_clk_in" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk_in</obj_property>
+      <obj_property name="ObjectShortName">spi_clk_in</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/spi_clk_in_negedge" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk_in_negedge</obj_property>
+      <obj_property name="ObjectShortName">spi_clk_in_negedge</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/spi_clk_in_posedge" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk_in_posedge</obj_property>
+      <obj_property name="ObjectShortName">spi_clk_in_posedge</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/en" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">en</obj_property>
+      <obj_property name="ObjectShortName">en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/done" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">done</obj_property>
+      <obj_property name="ObjectShortName">done</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/spi_clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk</obj_property>
+      <obj_property name="ObjectShortName">spi_clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/spi_cs_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_cs_n</obj_property>
+      <obj_property name="ObjectShortName">spi_cs_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/mosi" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">mosi</obj_property>
+      <obj_property name="ObjectShortName">mosi</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/miso" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">miso</obj_property>
+      <obj_property name="ObjectShortName">miso</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/miso_tri" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">miso_tri</obj_property>
+      <obj_property name="ObjectShortName">miso_tri</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/din" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">din[31:0]</obj_property>
+      <obj_property name="ObjectShortName">din[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/dout" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dout[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dout[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/valid" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">valid</obj_property>
+      <obj_property name="ObjectShortName">valid</obj_property>
+   </wvobject>
+</wave_config>

@@ -42,6 +42,7 @@ either expressed or implied, of The Regents of the University of California.
  */
 module spi_master (
     input wire clk,
+    input wire rst,
     /*
      * Inputs
      */
@@ -57,7 +58,8 @@ module spi_master (
     output wire busy,
     output wire [WIDTH-1:0] dout,
     output wire mosi,
-    output wire spi_clk_out
+    output wire spi_clk_out,
+    output wire spi_cs_n
 );
 
 ////////////////////////////////////////////////////////////////////////////
@@ -76,15 +78,23 @@ localparam [2:0]
     STATE_WAIT_SPI_CLK_LOW = 3'b110,
     STATE_TRANSMITTING = 3'b111;
 
+localparam [BIT_COUNTER_WIDTH-1:0] BIT_COUNTER_INIT = 0;
+localparam [WIDTH-1:0] DATA_INIT = 0;
+localparam MISO_INIT = 1'b0;
+localparam SPI_CLK_OUT_INIT = 1'b0;
+localparam SPI_CS_N_INIT = 1'b1;
+localparam [2:0] STATE_INIT = STATE_IDLE;
+
 ////////////////////////////////////////////////////////////////////////////
 // REGISTERS
 ////////////////////////////////////////////////////////////////////////////
 
-reg [BIT_COUNTER_WIDTH-1:0] bit_counter_reg = 0, bit_counter_next;
-reg [WIDTH-1:0] data_reg = 0, data_next;
-reg miso_reg = 1'b0;
-reg spi_clk_out_reg = 1'b0;
-reg [2:0] state_reg = STATE_IDLE, state_next;
+reg [BIT_COUNTER_WIDTH-1:0] bit_counter_reg = BIT_COUNTER_INIT, bit_counter_next;
+reg [WIDTH-1:0] data_reg = DATA_INIT, data_next;
+reg miso_reg = MISO_INIT;
+reg spi_clk_out_reg = SPI_CLK_OUT_INIT;
+reg spi_cs_n_reg = SPI_CS_N_INIT;
+reg [2:0] state_reg = STATE_INIT, state_next;
 
 ////////////////////////////////////////////////////////////////////////////
 // WIRES and WIRE REGS (wires that are assigned inside of an always block)
@@ -92,6 +102,7 @@ reg [2:0] state_reg = STATE_IDLE, state_next;
 
 wire miso_next = (state_reg == STATE_TRANSMITTING & spi_clk_in_posedge) ? miso : miso_reg;
 wire spi_clk_out_next = (state_reg == STATE_TRANSMITTING) ? spi_clk_in : 1'b0;
+wire spi_cs_n_next = (state_reg == STATE_TRANSMITTING) ? 1'b0 : 1'b1;
 
 ////////////////////////////////////////////////////////////////////////////
 // COMBINATIONAL ASSIGN STATEMENTS
@@ -101,12 +112,13 @@ assign busy = state_reg[2];
 assign dout = data_reg;
 assign mosi = data_reg[WIDTH-1]; // transmit MSB first
 assign spi_clk_out = spi_clk_out_reg;
+assign spi_cs_n = spi_cs_n_reg;
 
 ////////////////////////////////////////////////////////////////////////////
 // COMBINATIONAL ALWAYS STATEMENTS (always @* begin ... end)
 ////////////////////////////////////////////////////////////////////////////
 
-always @* begin
+always @* begin : combinational_logic
     bit_counter_next = bit_counter_reg;
     case (state_reg)
         STATE_IDLE:
@@ -116,9 +128,6 @@ always @* begin
             if (bit_counter_reg != 0 & spi_clk_in_negedge)
                 bit_counter_next = bit_counter_reg - 1;
     endcase
-end
-
-always @* begin
     data_next = data_reg;
     case (state_reg)
         STATE_IDLE:
@@ -128,9 +137,6 @@ always @* begin
             if (bit_counter_reg != 0 & spi_clk_in_negedge)
                 data_next = {data_reg[WIDTH-2:0], miso_reg};
     endcase
-end
-
-always @* begin
     state_next = state_reg;
     case (state_reg)
         STATE_IDLE:
@@ -153,12 +159,23 @@ end
 // SEQUENTIAL ALWAYS STATEMENTS (always @(posedge clk) begin ... end)
 ////////////////////////////////////////////////////////////////////////////
 
-always @(posedge clk) begin
-    bit_counter_reg <= bit_counter_next;
-    data_reg <= data_next;
-    miso_reg <= miso_next;
-    spi_clk_out_reg <= spi_clk_out_next;
-    state_reg <= state_next;
+always @(posedge clk) begin : sequential_logic
+    if (rst) begin
+        bit_counter_reg <= BIT_COUNTER_INIT;
+        data_reg <= DATA_INIT;
+        miso_reg <= MISO_INIT;
+        spi_clk_out_reg <= SPI_CLK_OUT_INIT;
+        spi_cs_n_reg <= SPI_CS_N_INIT;
+        state_reg <= STATE_INIT;
+    end
+    else begin
+        bit_counter_reg <= bit_counter_next;
+        data_reg <= data_next;
+        miso_reg <= miso_next;
+        spi_clk_out_reg <= spi_clk_out_next;
+        spi_cs_n_reg <= spi_cs_n_next;
+        state_reg <= state_next;
+    end
 end
 
 endmodule

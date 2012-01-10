@@ -33,43 +33,47 @@ either expressed or implied, of The Regents of the University of California.
 
 `timescale 1 ns / 1 ps
 
-module spi_master_tb;
+module spi_slave_tb;
 
 ////////////////////////////////////////////////////////////////////////////
 // DOCUMENTATION
 ////////////////////////////////////////////////////////////////////////////
 
-
 ////////////////////////////////////////////////////////////////////////////
 // PARAMETERS AND CONSTANTS
 ////////////////////////////////////////////////////////////////////////////
 
-localparam WIDTH=4;
+localparam N = 100;
+localparam STIMULUS_FILE = "spi_master_model.100random32.txt";
+localparam RESPONSE_FILE = "spi_master_model.100random32.txt";
+localparam WIDTH=32;
 
 ////////////////////////////////////////////////////////////////////////////
 // WIRES and WIRE REGS (wires that are assigned inside of an always block)
 ////////////////////////////////////////////////////////////////////////////
 
-integer test = 0;
-
-reg clk = 1'b1; // 125MHz
-reg rst = 1'b0;
 /*
- * Inputs
+ * Testbench
  */
-reg [WIDTH-1:0] din = 4'hF;
-reg miso = 1'b0;
-reg spi_clk_in = 1'b1; // 12.5MHz
+reg clk = 1'b1; // 125MHz clock
+reg rst = 1'b0;
+reg spi_clk_in = 1'b1; // 12.5MHz clock
 reg spi_clk_in_negedge = 1'b0;
 reg spi_clk_in_posedge = 1'b1;
-reg strobe = 1'b0;
+wire done;
+reg en = 1'b0;
+
 /*
- * Outputs
+ * Wires
  */
-wire busy;
+wire [WIDTH-1:0] din = dout; // loopback
 wire [WIDTH-1:0] dout;
 wire mosi;
-wire spi_clk_out;
+wire miso;
+wire miso_tri;
+wire spi_clk;
+wire spi_cs_n;
+wire valid;
 
 ////////////////////////////////////////////////////////////////////////////
 // CLOCKS
@@ -127,61 +131,73 @@ always begin : clocks
 end
 
 ////////////////////////////////////////////////////////////////////////////
-// STIMULUS/RESPONSE
+// RESETS
 ////////////////////////////////////////////////////////////////////////////
 
-task do_test();
-begin
-   test = test + 1;
-   @(negedge clk);
-   strobe = 1'b1;
-   @(negedge clk);
-   strobe = 1'b0;
-   @(negedge busy);
-   #80;
-   @(negedge clk);
+initial begin : reset
+     #100;
+     @(negedge clk);
+     en = 1'b1;
 end
-endtask
 
-initial begin : stimulus_response
-   #100; // wait for Xilinx GSR
-   // Test 1: Write F, Read 0
-   din = 4'hF;
-   miso = 1'b0;
-   do_test();
-   // Test 2: Write 0, Read F
-   din = 4'h0;
-   miso = 1'b1;
-   do_test();
-   $stop;
+////////////////////////////////////////////////////////////////////////////
+// TEST
+////////////////////////////////////////////////////////////////////////////
+
+initial begin : test
+     wait(done);
+     $stop;
 end
 
 ////////////////////////////////////////////////////////////////////////////
 // COMPONENT INSTANTIATIONS
 ////////////////////////////////////////////////////////////////////////////
 
-spi_master #(
-    .WIDTH(WIDTH))
+spi_master_model #(
+    .N(100),
+    .STIMULUS_FILE(STIMULUS_FILE),
+    .RESPONSE_FILE(RESPONSE_FILE),
+    .WIDTH(WIDTH)
+)
+TESTFIXTURE (
+    .clk(clk),                               // IN(1)
+    .spi_clk_in(spi_clk_in),                 // IN(1)
+    .spi_clk_in_negedge(spi_clk_in_negedge), // IN(1)
+    .spi_clk_in_posedge(spi_clk_in_posedge), // IN(1)
+    /*
+     * Testbench control signals
+     */
+    .done(done),                             // OUT(1)
+    .en(en),                                 // IN(1)
+    /*
+     * SPI interface
+     */
+    .mosi(mosi),                             // OUT(1)
+    .miso(miso),                             // IN(1)
+    .spi_clk(spi_clk),                       // OUT(1)
+    .spi_cs_n(spi_cs_n)                      // OUT(1)
+);
+
+spi_slave #(
+    .WIDTH(WIDTH)
+)
 UUT (
-    .clk(clk),                               // input
-    .rst(rst),                               // input
+    .clk(clk),           // IN(1)
+    .rst(rst),           // IN(1)
     /*
      * Inputs
      */
-    .din(din),                               // input [WIDTH-1:0]
-    .miso(miso),                             // input
-    .spi_clk_in(spi_clk_in),                 // input
-    .spi_clk_in_negedge(spi_clk_in_negedge), // input
-    .spi_clk_in_posedge(spi_clk_in_posedge), // input
-    .strobe(strobe),                         // input
+    .din(din),           // IN(WIDTH)
+    .spi_clk(spi_clk),   // IN(1)
+    .spi_cs_n(spi_cs_n), // IN(1)
+    .mosi(mosi),         // OUT(1)
     /*
      * Outputs
      */
-    .busy(busy),                             // output
-    .dout(dout),                             // output [WIDTH-1:0]
-    .mosi(mosi),                             // output
-    .spi_clk_out(spi_clk_out),               // output
-    .spi_cs_n(spi_cs_n)                      // output
+    .dout(dout),         // OUT(WIDTH)
+    .miso(miso),         // OUT(1)
+    .miso_tri(miso_tri), // OUT(1)
+    .valid(valid)        // OUT(1)
 );
 
 endmodule

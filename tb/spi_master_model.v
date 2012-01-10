@@ -33,127 +33,123 @@ either expressed or implied, of The Regents of the University of California.
 
 `timescale 1 ns / 1 ps
 
-module spi_master_tb;
+module spi_master_model (
+    input wire clk,
+    input wire spi_clk_in,
+    input wire spi_clk_in_negedge,
+    input wire spi_clk_in_posedge,
+    /*
+     * Testbench control signals
+     */
+    output reg done,
+    input wire en,
+    /*
+     * SPI interface
+     */
+    output wire mosi,
+    input wire miso,
+    output wire spi_clk,
+    output wire spi_cs_n
+);
 
 ////////////////////////////////////////////////////////////////////////////
 // DOCUMENTATION
 ////////////////////////////////////////////////////////////////////////////
 
+/*
+
+This verification module connects to a SPI slave under test, feeds it inputs as
+fast as possible, and verifies the outputs. The stimulus and response vectors
+come frome files, generated with an external Python script. The done output is
+asserted when the last response vector has been checked. The enable input
+delays the transmission of stimulus vectors until asserted.
+
+*/
 
 ////////////////////////////////////////////////////////////////////////////
 // PARAMETERS AND CONSTANTS
 ////////////////////////////////////////////////////////////////////////////
 
-localparam WIDTH=4;
+parameter N = 1; // length of stimulus and response files
+parameter STIMULUS_FILE = "spi_master_model.stimulus.txt";
+parameter RESPONSE_FILE = "spi_master_model.response.txt";
+parameter WIDTH=32;
+
+////////////////////////////////////////////////////////////////////////////
+// MEMORIES
+////////////////////////////////////////////////////////////////////////////
+
+reg [WIDTH-1:0] stimulus_mem [1:N];
+reg [WIDTH-1:0] response_mem [1:N];
 
 ////////////////////////////////////////////////////////////////////////////
 // WIRES and WIRE REGS (wires that are assigned inside of an always block)
 ////////////////////////////////////////////////////////////////////////////
 
-integer test = 0;
+integer stimulus_index = 0;
+integer response_index = -1;
 
-reg clk = 1'b1; // 125MHz
-reg rst = 1'b0;
-/*
- * Inputs
- */
-reg [WIDTH-1:0] din = 4'hF;
-reg miso = 1'b0;
-reg spi_clk_in = 1'b1; // 12.5MHz
-reg spi_clk_in_negedge = 1'b0;
-reg spi_clk_in_posedge = 1'b1;
+reg rst = 1'b0; // it doesn't make sense to reset this module
+
+reg [WIDTH-1:0] din = 0;
 reg strobe = 1'b0;
-/*
- * Outputs
- */
+
 wire busy;
 wire [WIDTH-1:0] dout;
-wire mosi;
 wire spi_clk_out;
 
 ////////////////////////////////////////////////////////////////////////////
-// CLOCKS
+// COMBINATIONAL ASSIGNMENTS
 ////////////////////////////////////////////////////////////////////////////
 
-always begin : clocks
-   spi_clk_in = 1'b1;
-   spi_clk_in_negedge = 1'b0;
-   spi_clk_in_posedge = 1'b1;
-   clk = 1'b1;
-   #4;
-   clk = 1'b0;
-   #4;
-   spi_clk_in_posedge = 1'b0;
-   clk = 1'b1;
-   #4;
-   clk = 1'b0;
-   #4;
-   clk = 1'b1;
-   #4;
-   clk = 1'b0;
-   #4;
-   clk = 1'b1;
-   #4;
-   clk = 1'b0;
-   #4;
-   clk = 1'b1;
-   #4;
-   clk = 1'b0;
-   #4;
-   spi_clk_in = 1'b0;
-   spi_clk_in_negedge = 1'b1;
-   spi_clk_in_posedge = 1'b0;
-   clk = 1'b1;
-   #4;
-   clk = 1'b0;
-   #4;
-   spi_clk_in_negedge = 1'b0;
-   clk = 1'b1;
-   #4;
-   clk = 1'b0;
-   #4;
-   clk = 1'b1;
-   #4;
-   clk = 1'b0;
-   #4;
-   clk = 1'b1;
-   #4;
-   clk = 1'b0;
-   #4;
-   clk = 1'b1;
-   #4;
-   clk = 1'b0;
-   #4;
-end
+assign spi_clk = spi_clk_out;
 
 ////////////////////////////////////////////////////////////////////////////
-// STIMULUS/RESPONSE
+// STIMULUS / RESPONSE
 ////////////////////////////////////////////////////////////////////////////
 
-task do_test();
+/*
+ * Transmit the stimulus vector.
+ */
+task stimulus();
 begin
-   test = test + 1;
-   @(negedge clk);
-   strobe = 1'b1;
-   @(negedge clk);
-   strobe = 1'b0;
-   @(negedge busy);
-   #80;
-   @(negedge clk);
+    stimulus_index = stimulus_index + 1'b1;
+    @(negedge clk);
+    din = stimulus_mem[stimulus_index];
+    strobe = 1'b1; 
+    @(negedge clk);
+    din = 0;
+    strobe = 1'b0; 
+    @(negedge clk);
+end
+endtask
+
+/*
+ * Read the expected response vector and verify that it matches the
+ * actual response.
+ */
+task response();
+begin
+    response_index = response_index + 1'b1;
+    wait (~busy);
+    if (response_index != 0 && dout != response_mem[response_index]) begin
+        $display("spi_master_model: expected_response=%08h, actual_response=%08h",
+            response_mem[response_index], dout);
+        $stop(2);
+    end
 end
 endtask
 
 initial begin : stimulus_response
-   #100; // wait for Xilinx GSR
-   // Test 1: Write F, Read 0
-   din = 4'hF;
-   miso = 1'b0;
-   do_test();
-   // Test 2: Write 0, Read F
-   din = 4'h0;
-   miso = 1'b1;
-   do_test();
-   $stop;
+    done = 1'b0;
+    $readmemh(STIMULUS_FILE, stimulus_mem);
+    $readmemh(RESPONSE_FILE, response_mem);
+    wait (en);
+    repeat (N) begin
+        stimulus();
+        response();
+    end
+    done = 1'b1;
 end
 
 ////////////////////////////////////////////////////////////////////////////
@@ -161,27 +157,28 @@ end
 ////////////////////////////////////////////////////////////////////////////
 
 spi_master #(
-    .WIDTH(WIDTH))
-UUT (
-    .clk(clk),                               // input
-    .rst(rst),                               // input
+    .WIDTH(WIDTH)
+)
+spi_master_inst (
+    .clk(clk),
+    .rst(rst),
     /*
      * Inputs
      */
-    .din(din),                               // input [WIDTH-1:0]
-    .miso(miso),                             // input
-    .spi_clk_in(spi_clk_in),                 // input
-    .spi_clk_in_negedge(spi_clk_in_negedge), // input
-    .spi_clk_in_posedge(spi_clk_in_posedge), // input
-    .strobe(strobe),                         // input
+    .din(din),
+    .miso(miso),
+    .spi_clk_in(spi_clk_in),
+    .spi_clk_in_negedge(spi_clk_in_negedge),
+    .spi_clk_in_posedge(spi_clk_in_posedge),
+    .strobe(strobe),
     /*
      * Outputs
      */
-    .busy(busy),                             // output
-    .dout(dout),                             // output [WIDTH-1:0]
-    .mosi(mosi),                             // output
-    .spi_clk_out(spi_clk_out),               // output
-    .spi_cs_n(spi_cs_n)                      // output
+    .busy(busy),
+    .dout(dout),
+    .mosi(mosi),
+    .spi_clk_out(spi_clk_out),
+    .spi_cs_n(spi_cs_n)
 );
 
 endmodule

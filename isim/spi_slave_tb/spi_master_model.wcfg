@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="Z:/nfarring/src/2011/cores/ise/spi_slave_tb_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="spi_slave_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="20" />
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/spi_clk_in" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk_in</obj_property>
+      <obj_property name="ObjectShortName">spi_clk_in</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/spi_clk_in_negedge" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk_in_negedge</obj_property>
+      <obj_property name="ObjectShortName">spi_clk_in_negedge</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/spi_clk_in_posedge" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk_in_posedge</obj_property>
+      <obj_property name="ObjectShortName">spi_clk_in_posedge</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/en" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">en</obj_property>
+      <obj_property name="ObjectShortName">en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/mosi" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">mosi</obj_property>
+      <obj_property name="ObjectShortName">mosi</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/miso" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">miso</obj_property>
+      <obj_property name="ObjectShortName">miso</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/spi_clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk</obj_property>
+      <obj_property name="ObjectShortName">spi_clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/spi_cs_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_cs_n</obj_property>
+      <obj_property name="ObjectShortName">spi_cs_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/busy" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">busy</obj_property>
+      <obj_property name="ObjectShortName">busy</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/din" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">din[31:0]</obj_property>
+      <obj_property name="ObjectShortName">din[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/dout" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dout[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dout[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/spi_clk_out" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">spi_clk_out</obj_property>
+      <obj_property name="ObjectShortName">spi_clk_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/done" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">done</obj_property>
+      <obj_property name="ObjectShortName">done</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/stimulus_mem" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">stimulus_mem[1:100,31:0]</obj_property>
+      <obj_property name="ObjectShortName">stimulus_mem[1:100,31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/response_mem" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">response_mem[1:100,31:0]</obj_property>
+      <obj_property name="ObjectShortName">response_mem[1:100,31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/stimulus_index" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">stimulus_index[31:0]</obj_property>
+      <obj_property name="ObjectShortName">stimulus_index[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/response_index" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">response_index[31:0]</obj_property>
+      <obj_property name="ObjectShortName">response_index[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/rst" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/spi_slave_tb/TESTFIXTURE/strobe" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">strobe</obj_property>
+      <obj_property name="ObjectShortName">strobe</obj_property>
+   </wvobject>
+</wave_config>
