@@ -35,24 +35,58 @@ either expressed or implied, of The Regents of the University of California.
 
 module timer_tb;
 
+////////////////////////////////////////////////////////////////////////////
+// DOCUMENTATION
+////////////////////////////////////////////////////////////////////////////
+
 localparam TIMER_PERIOD_NS=80;
 localparam CLOCK_PERIOD_NS=8;
 
+////////////////////////////////////////////////////////////////////////////
+// PARAMETERS AND CONSTANTS
+////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////
+// WIRES and WIRE REGS (wires that are assigned inside of an always block)
+////////////////////////////////////////////////////////////////////////////
+
+integer test = 0;
+
+reg clk = 1'b1;
+reg rst = 1'b0;
+/*
+ * Inputs
+ */
 reg arm = 1'b0;
-reg clk;
 reg en = 1'b0;
+/*
+ * Outputs
+ */
 wire fire;
 
-always begin : clock_125MHz
+////////////////////////////////////////////////////////////////////////////
+// CLOCKS
+////////////////////////////////////////////////////////////////////////////
+
+always begin : clock125MHz
    clk = 1'b1;
    #4;
    clk = 1'b0;
    #4;
 end
 
+////////////////////////////////////////////////////////////////////////////
+// RESETS
+////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////
+// STIMULUS
+////////////////////////////////////////////////////////////////////////////
+
 initial begin : stimulus
     #100; @(negedge clk); // wait for Xilinx GSR
-    // normal behavior
+    // Test 1: normal behavior
+    test = 1;
     arm = 1'b1; en = 1'b1; @(negedge clk); ASSERT(fire,0); // 9
     arm = 1'b0;            @(negedge clk); ASSERT(fire,0); // 8
                            @(negedge clk); ASSERT(fire,0); // 7
@@ -65,17 +99,21 @@ initial begin : stimulus
                            @(negedge clk); ASSERT(fire,0); // 0
                            @(negedge clk); ASSERT(fire,1); // 0
                 en = 1'b0; @(negedge clk); ASSERT(fire,0); // 0
+    test = 0;
     repeat(9) @(negedge clk);
-    // test 1: enable/disable
+    // Test 2: enable/disable
+    test = 2;
                            @(negedge clk); ASSERT(fire,0);
                 en = 1'b1; @(negedge clk); ASSERT(fire,1);
                 en = 1'b0; @(negedge clk); ASSERT(fire,0);
-    // test 2: asserting arm
+    // Test 3: asserting arm
+    test = 3;
     arm = 1'b1; en = 1'b1; @(negedge clk); ASSERT(fire,0); // 9
                 en = 1'b1; @(negedge clk); ASSERT(fire,0); // 9
                 en = 1'b1; @(negedge clk); ASSERT(fire,0); // 9
                 en = 1'b1; @(negedge clk); ASSERT(fire,0); // 9
-    // test 3: countdown/fire
+    // Test 4: countdown/fire
+    test = 4;
     arm = 1'b0;            @(negedge clk); ASSERT(fire,0); // 8
                            @(negedge clk); ASSERT(fire,0); // 7
                            @(negedge clk); ASSERT(fire,0); // 6
@@ -88,17 +126,27 @@ initial begin : stimulus
                            @(negedge clk); ASSERT(fire,1); // 0
                            @(negedge clk); ASSERT(fire,1); // 0
                            @(negedge clk); ASSERT(fire,1); // 0
+    test = 0;
     $stop;
 end
+
+////////////////////////////////////////////////////////////////////////////
+// RESPONSE
+////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////
+// COMPONENT INSTANTIATIONS
+////////////////////////////////////////////////////////////////////////////
 
 timer #(
     .TIMER_PERIOD_NS(TIMER_PERIOD_NS),
     .CLOCK_PERIOD_NS(CLOCK_PERIOD_NS))
 UUT (
-    .arm(arm),  // input
-    .clk(clk),  // input
-    .en(en),    // input
-    .fire(fire) // output
+    .clk(clk),  // IN(1)
+    .rst(rst),  // IN(1)
+    .arm(arm),  // IN(1)
+    .en(en),    // IN(1)
+    .fire(fire) // OUT(1)
 );
 
 //////////////////////////////////////////////////////////////////////////////

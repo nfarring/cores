@@ -37,32 +37,75 @@ either expressed or implied, of The Regents of the University of California.
  * A simple timer that expires after a specified number of clock ticks.
  */
 module timer (
-    input wire arm,
     input wire clk,
+    input wire rst,
+    input wire arm,
     input wire en,
     output wire fire
 );
 
 `include "log2.vh"
 
+////////////////////////////////////////////////////////////////////////////
+// PARAMETERS AND CONSTANTS
+////////////////////////////////////////////////////////////////////////////
+
 parameter TIMER_PERIOD_NS=80; // how long until the timer fires
 parameter CLOCK_PERIOD_NS=8;  // period of the common clock
 parameter NTICKS=TIMER_PERIOD_NS/CLOCK_PERIOD_NS; // overridable if necessary
 localparam NBITS=log2(NTICKS); // size of state register
 
-reg [NBITS-1:0] state_reg = 0, state_next;
-always @* begin
+localparam FIRE_INIT = 1'b0;
+localparam [NBITS-1:0] STATE_INIT = 0;
+
+////////////////////////////////////////////////////////////////////////////
+// REGISTERS
+////////////////////////////////////////////////////////////////////////////
+
+reg fire_reg = FIRE_INIT;
+reg [NBITS-1:0] state_reg = STATE_INIT, state_next;
+
+////////////////////////////////////////////////////////////////////////////
+// WIRES and WIRE REGS (wires that are assigned inside of an always block)
+////////////////////////////////////////////////////////////////////////////
+
+wire fire_next = ~arm & en & ~(|state_reg);
+
+////////////////////////////////////////////////////////////////////////////
+// COMPONENT INSTANTIATIONS
+////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////
+// COMBINATIONAL ASSIGN STATEMENTS
+////////////////////////////////////////////////////////////////////////////
+
+assign fire = fire_reg;
+
+////////////////////////////////////////////////////////////////////////////
+// COMBINATIONAL ALWAYS STATEMENTS (always @* begin ... end)
+////////////////////////////////////////////////////////////////////////////
+
+always @* begin: combinational_logic
     state_next = state_reg;
     if (arm)
         state_next = NTICKS - 1'b1;
     else if (en & state_reg != 0)
         state_next = state_reg - 1'b1;
 end
-always @(posedge clk) state_reg <= state_next;
 
-reg fire_reg = 1'b0;
-wire fire_next = ~arm & en & ~(|state_reg);
-always @(posedge clk) fire_reg <= fire_next;
-assign fire = fire_reg;
+////////////////////////////////////////////////////////////////////////////
+// SEQUENTIAL ALWAYS STATEMENTS (always @(posedge clk) begin ... end)
+////////////////////////////////////////////////////////////////////////////
+
+always @(posedge clk) begin : sequential_logic
+   if (rst) begin
+       fire_reg <= FIRE_INIT;
+       state_reg <= STATE_INIT;
+   end
+   else begin
+       fire_reg <= fire_next;
+       state_reg <= state_next;
+    end
+end
 
 endmodule
