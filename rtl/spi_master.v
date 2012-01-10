@@ -126,7 +126,7 @@ always @* begin : combinational_logic
                 bit_counter_next = WIDTH;
         STATE_TRANSMITTING:
             if (bit_counter_reg != 0 & spi_clk_in_negedge)
-                bit_counter_next = bit_counter_reg - 1;
+                bit_counter_next = bit_counter_reg - 1'b1;
     endcase
     data_next = data_reg;
     case (state_reg)
